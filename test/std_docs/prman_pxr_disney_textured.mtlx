@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<materialx version="1.35">
+  <material name="material" target="renderman">
+    <shaderref name="mtlx_output" node="material_output" xpos="4.430217742919922" ypos="-485.31671142578125">
+      <bindinput name="bxdf" type="surfaceshader" nodegraph="ng_material" output="ng_surface_out" />
+      <bindinput name="light" type="volumeshader" nodegraph="ng_material" output="ng_volume_out" />
+      <bindinput name="displacement" type="float" nodegraph="ng_material" output="ng_disp_out" />
+    </shaderref>
+  </material>
+  <nodedef name="material_output_def" type="surfaceshader" node="material_output">
+    <input name="bxdf" type="surfaceshader" />
+    <input name="light" type="volumeshader" />
+    <input name="displacement" type="float" />
+  </nodedef>
+  <nodegraph name="ng_material" nodedef="material_output_def">
+    <output name="ng_surface_out" type="surfaceshader" nodename="pxrdisney" />
+    <output name="ng_volume_out" type="volumeshader" />
+    <output name="ng_disp_out" type="float" />
+    <pxr_texture name="pxrtexture" type="color3" xpos="-895.8366088867188" ypos="-81.57096862792969">
+      <input name="blur.009" type="float" interfacename="blur.009" />
+      <input name="missing_color.008" type="color3" interfacename="missing_color.008" />
+      <input name="missing_alpha.007" type="float" interfacename="missing_alpha.007" />
+      <input name="manifold.006" type="shader" interfacename="manifold.006" nodename="pxrmanifold2d" />
+    </pxr_texture>
+    <pxr_texture name="pxrtexture.002" type="color3" xpos="-899.0712890625" ypos="-942.9066772460938">
+      <input name="blur.027" type="float" interfacename="blur.027" />
+      <input name="missing_color.026" type="color3" interfacename="missing_color.026" />
+      <input name="missing_alpha.025" type="float" interfacename="missing_alpha.025" />
+      <input name="manifold.024" type="shader" interfacename="manifold.024" nodename="pxrmanifold2d" />
+    </pxr_texture>
+    <pxr_texture name="pxrtexture.001" type="color3" xpos="-899.8523559570312" ypos="-509.85400390625">
+      <input name="blur.018" type="float" interfacename="blur.018" />
+      <input name="missing_color.017" type="color3" interfacename="missing_color.017" />
+      <input name="missing_alpha.016" type="float" interfacename="missing_alpha.016" />
+      <input name="manifold.015" type="shader" interfacename="manifold.015" nodename="pxrmanifold2d" />
+    </pxr_texture>
+    <pxr_manifold2_d name="pxrmanifold2d" type="shader" xpos="-1414.8798828125" ypos="-745.7091674804688">
+      <input name="angle.035" type="float" interfacename="angle.035" />
+      <input name="scale_s.034" type="float" interfacename="scale_s.034" />
+      <input name="scale_t.033" type="float" interfacename="scale_t.033" />
+      <input name="offset_s.032" type="float" interfacename="offset_s.032" />
+      <input name="offset_t.031" type="float" interfacename="offset_t.031" />
+    </pxr_manifold2_d>
+    <pxr_normal_map name="pxrnormalmap" type="vector3" xpos="-888.9354248046875" ypos="-1369.4197998046875">
+      <input name="bump_scale.043" type="float" interfacename="bump_scale.043" />
+      <input name="input_rgb.042" type="color3" interfacename="input_rgb.042" />
+      <input name="bump_overlay.041" type="vector3" interfacename="bump_overlay.041" />
+      <input name="blur.040" type="float" interfacename="blur.040" />
+      <input name="manifold.039" type="shader" interfacename="manifold.039" nodename="pxrmanifold2d" />
+      <input name="adjust_amount.038" type="float" interfacename="adjust_amount.038" />
+      <input name="surface_normal_mix.037" type="float" interfacename="surface_normal_mix.037" />
+    </pxr_normal_map>
+    <pxr_disney name="pxrdisney" type="shader" xpos="-389.2793884277344" ypos="-453.7899475097656">
+      <input name="base_color.060" type="color3" interfacename="base_color.060" nodename="pxrtexture" />
+      <input name="emit_color.059" type="color3" interfacename="emit_color.059" />
+      <input name="subsurface.058" type="float" interfacename="subsurface.058" />
+      <input name="subsurface_color.057" type="color3" interfacename="subsurface_color.057" />
+      <input name="metallic.056" type="float" interfacename="metallic.056" nodename="pxrtexture.001" />
+      <input name="specular.055" type="float" interfacename="specular.055" />
+      <input name="specular_tint.054" type="float" interfacename="specular_tint.054" />
+      <input name="roughness.053" type="float" interfacename="roughness.053" nodename="pxrtexture.002" />
+      <input name="anisotropic.052" type="float" interfacename="anisotropic.052" />
+      <input name="sheen.051" type="float" interfacename="sheen.051" />
+      <input name="sheen_tint.050" type="float" interfacename="sheen_tint.050" />
+      <input name="clearcoat.049" type="float" interfacename="clearcoat.049" />
+      <input name="clearcoat_gloss.048" type="float" interfacename="clearcoat_gloss.048" />
+      <input name="bump_normal.047" type="vector3" interfacename="bump_normal.047" nodename="pxrnormalmap" />
+      <input name="presence.046" type="float" interfacename="presence.046" />
+      <input name="input_aov.045" type="integer" interfacename="input_aov.045" />
+    </pxr_disney>
+  </nodegraph>
+  <nodedef name="pxrdisneybxdfnode" type="shader" node="pxr_disney" target="renderman">
+    <input name="base_color.060" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="emit_color.059" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="subsurface.058" type="float" value="0.0" />
+    <input name="subsurface_color.057" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="metallic.056" type="float" value="0.0" />
+    <input name="specular.055" type="float" value="0.0" />
+    <input name="specular_tint.054" type="float" value="0.0" />
+    <input name="roughness.053" type="float" value="0.0" />
+    <input name="anisotropic.052" type="float" value="0.0" />
+    <input name="sheen.051" type="float" value="0.0" />
+    <input name="sheen_tint.050" type="float" value="0.0" />
+    <input name="clearcoat.049" type="float" value="0.0" />
+    <input name="clearcoat_gloss.048" type="float" value="0.0" />
+    <input name="bump_normal.047" type="vector3" value="0.0, 0.0, 0.0" />
+    <input name="presence.046" type="float" value="0.0" />
+    <input name="input_aov.045" type="integer" value="0" />
+    <output name="bxdf.044" type="shader" />
+  </nodedef>
+  <nodedef name="pxrnormalmappatternnode" type="vector3" node="pxr_normal_map" target="renderman">
+    <input name="bump_scale.043" type="float" value="0.0" />
+    <input name="input_rgb.042" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="bump_overlay.041" type="vector3" value="0.0, 0.0, 0.0" />
+    <input name="blur.040" type="float" value="0.0" />
+    <input name="manifold.039" type="shader" />
+    <input name="adjust_amount.038" type="float" value="0.0" />
+    <input name="surface_normal_mix.037" type="float" value="0.0" />
+    <output name="result_n.036" type="vector3" />
+  </nodedef>
+  <nodedef name="pxrmanifold2dpatternnode" type="multioutput" node="pxr_manifold2_d" target="renderman">
+    <input name="angle.035" type="float" value="0.0" />
+    <input name="scale_s.034" type="float" value="0.0" />
+    <input name="scale_t.033" type="float" value="0.0" />
+    <input name="offset_s.032" type="float" value="0.0" />
+    <input name="offset_t.031" type="float" value="0.0" />
+    <output name="result.030" type="shader" />
+    <output name="result_s.029" type="float" />
+    <output name="result_t.028" type="float" />
+  </nodedef>
+  <nodedef name="pxrtexturepatternnode" type="multioutput" node="pxr_texture" target="renderman">
+    <input name="blur.027" type="float" value="0.0" />
+    <input name="missing_color.026" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="missing_alpha.025" type="float" value="0.0" />
+    <input name="manifold.024" type="shader" />
+    <output name="result_rgb.023" type="color3" />
+    <output name="result_r.022" type="float" />
+    <output name="result_g.021" type="float" />
+    <output name="result_b.020" type="float" />
+    <output name="result_a.019" type="float" />
+  </nodedef>
+</materialx>

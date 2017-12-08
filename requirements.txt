@@ -1,0 +1,5 @@
+cffi==1.10.0
+requests
+numpy
+pycrypto==2.6.1
+setuptools

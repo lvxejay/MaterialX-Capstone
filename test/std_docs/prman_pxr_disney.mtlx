@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<materialx version="1.35">
+  <material name="material" target="renderman">
+    <shaderref name="mtlx_output" node="material_output" xpos="4.430217742919922" ypos="-485.31671142578125">
+      <bindinput name="bxdf" type="surfaceshader" nodegraph="ng_material" output="ng_surface_out" />
+      <bindinput name="light" type="volumeshader" nodegraph="ng_material" output="ng_volume_out" />
+      <bindinput name="displacement" type="float" nodegraph="ng_material" output="ng_disp_out" />
+    </shaderref>
+  </material>
+  <nodedef name="material_output_def" type="surfaceshader" node="material_output">
+    <input name="bxdf" type="surfaceshader" />
+    <input name="light" type="volumeshader" />
+    <input name="displacement" type="float" />
+  </nodedef>
+  <nodegraph name="ng_material" nodedef="material_output_def">
+    <output name="ng_surface_out" type="surfaceshader" nodename="pxrdisney" />
+    <output name="ng_volume_out" type="volumeshader" />
+    <output name="ng_disp_out" type="float" />
+    <pxr_disney name="pxrdisney" type="shader" xpos="-389.2793884277344" ypos="-453.7899475097656">
+      <input name="base_color.017" type="color3" interfacename="base_color.017" />
+      <input name="emit_color.016" type="color3" interfacename="emit_color.016" />
+      <input name="subsurface.015" type="float" interfacename="subsurface.015" />
+      <input name="subsurface_color.014" type="color3" interfacename="subsurface_color.014" />
+      <input name="metallic.013" type="float" interfacename="metallic.013" />
+      <input name="specular.012" type="float" interfacename="specular.012" />
+      <input name="specular_tint.011" type="float" interfacename="specular_tint.011" />
+      <input name="roughness.010" type="float" interfacename="roughness.010" />
+      <input name="anisotropic.009" type="float" interfacename="anisotropic.009" />
+      <input name="sheen.008" type="float" interfacename="sheen.008" />
+      <input name="sheen_tint.007" type="float" interfacename="sheen_tint.007" />
+      <input name="clearcoat.006" type="float" interfacename="clearcoat.006" />
+      <input name="clearcoat_gloss.005" type="float" interfacename="clearcoat_gloss.005" />
+      <input name="bump_normal.004" type="vector3" interfacename="bump_normal.004" />
+      <input name="presence.003" type="float" interfacename="presence.003" />
+      <input name="input_aov.002" type="integer" interfacename="input_aov.002" />
+    </pxr_disney>
+  </nodegraph>
+  <nodedef name="pxrdisneybxdfnode" type="shader" node="pxr_disney" target="renderman">
+    <input name="base_color.017" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="emit_color.016" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="subsurface.015" type="float" value="0.0" />
+    <input name="subsurface_color.014" type="color3" value="0.0, 0.0, 0.0" />
+    <input name="metallic.013" type="float" value="0.0" />
+    <input name="specular.012" type="float" value="0.0" />
+    <input name="specular_tint.011" type="float" value="0.0" />
+    <input name="roughness.010" type="float" value="0.0" />
+    <input name="anisotropic.009" type="float" value="0.0" />
+    <input name="sheen.008" type="float" value="0.0" />
+    <input name="sheen_tint.007" type="float" value="0.0" />
+    <input name="clearcoat.006" type="float" value="0.0" />
+    <input name="clearcoat_gloss.005" type="float" value="0.0" />
+    <input name="bump_normal.004" type="vector3" value="0.0, 0.0, 0.0" />
+    <input name="presence.003" type="float" value="0.0" />
+    <input name="input_aov.002" type="integer" value="0" />
+    <output name="bxdf.001" type="shader" />
+  </nodedef>
+</materialx>

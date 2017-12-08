@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<materialx version="1.35">
+  <material name="material" target="cycles">
+    <shaderref name="mtlx_output" node="material_output" xpos="29.45578384399414" ypos="-582.2998657226562">
+      <bindinput name="surface" type="surfaceshader" nodegraph="ng_material" output="ng_surface_out" />
+      <bindinput name="volume" type="volumeshader" nodegraph="ng_material" output="ng_volume_out" />
+      <bindinput name="displacement" type="float" nodegraph="ng_material" output="ng_disp_out" />
+    </shaderref>
+  </material>
+  <nodedef name="material_output_def" type="surfaceshader" node="material_output">
+    <input name="surface" type="surfaceshader" />
+    <input name="volume" type="volumeshader" />
+    <input name="displacement" type="float" />
+  </nodedef>
+  <nodegraph name="ng_material" nodedef="material_output_def">
+    <output name="ng_surface_out" type="surfaceshader" nodename="diffuse_bsdf" />
+    <output name="ng_volume_out" type="volumeshader" />
+    <output name="ng_disp_out" type="float" />
+    <diffuse_bsdf name="diffuse_bsdf" type="shader" xpos="-317.3392333984375" ypos="-505.7606201171875">
+      <input name="color.007" type="color4" interfacename="color.007" />
+      <input name="roughness.006" type="float" interfacename="roughness.006" />
+      <input name="normal.005" type="vector3" interfacename="normal.005" />
+    </diffuse_bsdf>
+  </nodegraph>
+  <nodedef name="shadernodebsdfdiffuse" type="surfaceshader" node="diffuse_bsdf" target="cycles">
+    <input name="color.007" type="color4" value="0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0" />
+    <input name="roughness.006" type="float" value="0.0" />
+    <input name="normal.005" type="vector3" value="0.0, 0.0, 0.0" />
+  </nodedef>
+</materialx>

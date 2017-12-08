@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<materialx version="1.35">
+  <material name="material" target="cycles">
+    <shaderref name="mtlx_output" node="material_output" xpos="101.94361877441406" ypos="-582.2998657226562">
+      <bindinput name="surface" type="surfaceshader" nodegraph="ng_material" output="ng_surface_out" />
+      <bindinput name="volume" type="volumeshader" nodegraph="ng_material" output="ng_volume_out" />
+      <bindinput name="displacement" type="float" nodegraph="ng_material" output="ng_disp_out" />
+    </shaderref>
+  </material>
+  <nodedef name="material_output_def" type="surfaceshader" node="material_output">
+    <input name="surface" type="surfaceshader" />
+    <input name="volume" type="volumeshader" />
+    <input name="displacement" type="float" />
+  </nodedef>
+  <nodegraph name="ng_material" nodedef="material_output_def">
+    <output name="ng_surface_out" type="surfaceshader" nodename="principled_bsdf" />
+    <output name="ng_volume_out" type="volumeshader" />
+    <output name="ng_disp_out" type="float" />
+    <texture_coordinate name="texture_coordinate" type="vector3" xpos="-1191.0257568359375" ypos="-588.7666015625">
+      <parameter name="from_dupli" type="boolean" value="False" />
+      <parameter name="object" type="string" value="None" />
+    </texture_coordinate>
+    <mapping name="mapping" type="vector3" xpos="-991.0257568359375" ypos="-571.7666625976562">
+      <input name="vector.024" type="vector3" interfacename="vector.024" nodename="texture_coordinate" />
+      <parameter name="max" type="FLOAT" value="1.0, 1.0, 1.0" />
+      <parameter name="min" type="FLOAT" value="0.0, 0.0, 0.0" />
+      <parameter name="rotation" type="FLOAT" value="0.0, 0.0, 0.0" />
+      <parameter name="scale" type="FLOAT" value="1.0, 1.0, 1.0" />
+      <parameter name="translation" type="FLOAT" value="0.0, 0.0, 0.0" />
+      <parameter name="use_max" type="boolean" value="False" />
+      <parameter name="use_min" type="boolean" value="False" />
+      <parameter name="vector_type" type="string" value="POINT" />
+    </mapping>
+    <principled_bsdf name="principled_bsdf" type="shader" xpos="-221.48291015625" ypos="-554.81787109375">
+      <input name="base_color.045" type="color4" interfacename="base_color.045" nodename="image_texture" />
+      <input name="subsurface.044" type="float" interfacename="subsurface.044" />
+      <input name="subsurface_radius.043" type="vector3" interfacename="subsurface_radius.043" />
+      <input name="subsurface_color.042" type="color4" interfacename="subsurface_color.042" />
+      <input name="metallic.041" type="float" interfacename="metallic.041" nodename="image_texture.001" />
+      <input name="specular.040" type="float" interfacename="specular.040" />
+      <input name="specular_tint.039" type="float" interfacename="specular_tint.039" nodename="image_texture.002" />
+      <input name="roughness.038" type="float" interfacename="roughness.038" />
+      <input name="anisotropic.037" type="float" interfacename="anisotropic.037" />
+      <input name="anisotropic_rotation.036" type="float" interfacename="anisotropic_rotation.036" />
+      <input name="sheen.035" type="float" interfacename="sheen.035" />
+      <input name="sheen_tint.034" type="float" interfacename="sheen_tint.034" />
+      <input name="clearcoat.033" type="float" interfacename="clearcoat.033" />
+      <input name="clearcoat_roughness.032" type="float" interfacename="clearcoat_roughness.032" />
+      <input name="ior.031" type="float" interfacename="ior.031" />
+      <input name="transmission.030" type="float" interfacename="transmission.030" />
+      <input name="transmission_roughness.029" type="float" interfacename="transmission_roughness.029" />
+      <input name="normal.028" type="vector3" interfacename="normal.028" nodename="normal_map" />
+      <input name="clearcoat_normal.027" type="vector3" interfacename="clearcoat_normal.027" />
+      <input name="tangent.026" type="vector3" interfacename="tangent.026" />
+      <parameter name="distribution" type="string" value="MULTI_GGX" />
+    </principled_bsdf>
+    <image_texture name="image_texture.001" type="image" xpos="-691.0257568359375" ypos="-838.0482788085938">
+      <input name="vector.012" type="vector3" interfacename="vector.012" nodename="mapping" />
+      <parameter name="image" type="filename" value="" />
+    </image_texture>
+    <image_texture name="image_texture.002" type="image" xpos="-689.532958984375" ypos="-1073.8377685546875">
+      <input name="vector.009" type="vector3" interfacename="vector.009" nodename="mapping" />
+      <parameter name="image" type="filename" value="" />
+    </image_texture>
+    <normal_map name="normal_map" type="vector3" xpos="-451.48291015625" ypos="-1133.6912841796875">
+      <input name="strength.003" type="float" interfacename="strength.003" />
+      <input name="color.002" type="color4" interfacename="color.002" nodename="image_texture.003" />
+      <parameter name="space" type="string" value="TANGENT" />
+      <parameter name="uv_map" type="STRING" value="" />
+    </normal_map>
+    <image_texture name="image_texture.003" type="image" xpos="-683.5615844726562" ypos="-1308.134765625">
+      <input name="vector.006" type="vector3" interfacename="vector.006" nodename="mapping" />
+      <parameter name="image" type="filename" value="" />
+    </image_texture>
+    <image_texture name="image_texture" type="image" xpos="-691.0257568359375" ypos="-600.7666015625">
+      <input name="vector.015" type="vector3" interfacename="vector.015" nodename="mapping" />
+      <parameter name="image" type="filename" value="" />
+    </image_texture>
+  </nodegraph>
+  <nodedef name="shadernodebsdfprincipled" type="surfaceshader" node="principled_bsdf" target="cycles">
+    <input name="base_color.045" type="color4" value="0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0" />
+    <input name="subsurface.044" type="float" value="0.0" />
+    <input name="subsurface_radius.043" type="vector3" value="1.0, 1.0, 1.0" />
+    <input name="subsurface_color.042" type="color4" value="0.699999988079071, 0.10000000149011612, 0.10000000149011612, 1.0" />
+    <input name="metallic.041" type="float" value="0.0" />
+    <input name="specular.040" type="float" value="0.5" />
+    <input name="specular_tint.039" type="float" value="0.0" />
+    <input name="roughness.038" type="float" value="0.5" />
+    <input name="anisotropic.037" type="float" value="0.0" />
+    <input name="anisotropic_rotation.036" type="float" value="0.0" />
+    <input name="sheen.035" type="float" value="0.0" />
+    <input name="sheen_tint.034" type="float" value="0.5" />
+    <input name="clearcoat.033" type="float" value="0.0" />
+    <input name="clearcoat_roughness.032" type="float" value="0.029999999329447746" />
+    <input name="ior.031" type="float" value="1.4500000476837158" />
+    <input name="transmission.030" type="float" value="0.0" />
+    <input name="transmission_roughness.029" type="float" value="0.0" />
+    <input name="normal.028" type="vector3" value="0.0, 0.0, 0.0" />
+    <input name="clearcoat_normal.027" type="vector3" value="0.0, 0.0, 0.0" />
+    <input name="tangent.026" type="vector3" value="0.0, 0.0, 0.0" />
+    <parameter name="distribution" type="string" value="MULTI_GGX" />
+  </nodedef>
+  <nodedef name="shadernodemapping" type="vector3" node="mapping" target="cycles">
+    <input name="vector.024" type="vector3" value="0.0, 0.0, 0.0" />
+    <output name="vector.023" type="vector3" />
+    <parameter name="max" type="FLOAT" value="1.0, 1.0, 1.0" />
+    <parameter name="min" type="FLOAT" value="0.0, 0.0, 0.0" />
+    <parameter name="rotation" type="FLOAT" value="0.0, 0.0, 0.0" />
+    <parameter name="scale" type="FLOAT" value="1.0, 1.0, 1.0" />
+    <parameter name="translation" type="FLOAT" value="0.0, 0.0, 0.0" />
+    <parameter name="use_max" type="boolean" value="False" />
+    <parameter name="use_min" type="boolean" value="False" />
+    <parameter name="vector_type" type="string" value="POINT" />
+  </nodedef>
+  <nodedef name="shadernodetexcoord" type="multioutput" node="texture_coordinate" target="cycles">
+    <output name="generated.022" type="vector3" />
+    <output name="normal.021" type="vector3" />
+    <output name="uv.020" type="vector3" />
+    <output name="object.019" type="vector3" />
+    <output name="camera.018" type="vector3" />
+    <output name="window.017" type="vector3" />
+    <output name="reflection.016" type="vector3" />
+    <parameter name="from_dupli" type="boolean" value="False" />
+    <parameter name="object" type="string" value="None" />
+  </nodedef>
+  <nodedef name="shadernodeteximage" type="multioutput" node="image_texture" target="cycles">
+    <input name="vector.015" type="vector3" value="0.0, 0.0, 0.0" />
+    <output name="color.014" type="color4" />
+    <output name="alpha.013" type="float" />
+    <parameter name="image" type="filename" value="" />
+  </nodedef>
+  <nodedef name="shadernodenormalmap" type="vector3" node="normal_map" target="cycles">
+    <input name="strength.003" type="float" value="1.0" />
+    <input name="color.002" type="color4" value="0.5, 0.5, 1.0, 1.0" />
+    <output name="normal.001" type="vector3" />
+    <parameter name="space" type="string" value="TANGENT" />
+    <parameter name="uv_map" type="STRING" value="" />
+  </nodedef>
+</materialx>

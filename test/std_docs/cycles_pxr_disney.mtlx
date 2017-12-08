@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<materialx version="1.35">
+  <material name="material" target="cycles">
+    <shaderref name="mtlx_output" node="material_output" xpos="29.45578384399414" ypos="-582.2998657226562">
+      <bindinput name="surface" type="surfaceshader" nodegraph="ng_material" output="ng_surface_out" />
+      <bindinput name="volume" type="volumeshader" nodegraph="ng_material" output="ng_volume_out" />
+      <bindinput name="displacement" type="float" nodegraph="ng_material" output="ng_disp_out" />
+    </shaderref>
+  </material>
+  <nodedef name="material_output_def" type="surfaceshader" node="material_output">
+    <input name="surface" type="surfaceshader" />
+    <input name="volume" type="volumeshader" />
+    <input name="displacement" type="float" />
+  </nodedef>
+  <nodegraph name="ng_material" nodedef="material_output_def">
+    <output name="ng_surface_out" type="surfaceshader" nodename="principled_bsdf" />
+    <output name="ng_volume_out" type="volumeshader" />
+    <output name="ng_disp_out" type="float" />
+    <principled_bsdf name="principled_bsdf" type="shader" xpos="-293.9707336425781" ypos="-554.81787109375">
+      <input name="base_color.021" type="color4" interfacename="base_color.021" />
+      <input name="subsurface.020" type="float" interfacename="subsurface.020" />
+      <input name="subsurface_radius.019" type="vector3" interfacename="subsurface_radius.019" />
+      <input name="subsurface_color.018" type="color4" interfacename="subsurface_color.018" />
+      <input name="metallic.017" type="float" interfacename="metallic.017" />
+      <input name="specular.016" type="float" interfacename="specular.016" />
+      <input name="specular_tint.015" type="float" interfacename="specular_tint.015" />
+      <input name="roughness.014" type="float" interfacename="roughness.014" />
+      <input name="anisotropic.013" type="float" interfacename="anisotropic.013" />
+      <input name="anisotropic_rotation.012" type="float" interfacename="anisotropic_rotation.012" />
+      <input name="sheen.011" type="float" interfacename="sheen.011" />
+      <input name="sheen_tint.010" type="float" interfacename="sheen_tint.010" />
+      <input name="clearcoat.009" type="float" interfacename="clearcoat.009" />
+      <input name="clearcoat_roughness.008" type="float" interfacename="clearcoat_roughness.008" />
+      <input name="ior.007" type="float" interfacename="ior.007" />
+      <input name="transmission.006" type="float" interfacename="transmission.006" />
+      <input name="transmission_roughness.005" type="float" interfacename="transmission_roughness.005" />
+      <input name="normal.004" type="vector3" interfacename="normal.004" />
+      <input name="clearcoat_normal.003" type="vector3" interfacename="clearcoat_normal.003" />
+      <input name="tangent.002" type="vector3" interfacename="tangent.002" />
+      <parameter name="distribution" type="string" value="MULTI_GGX" />
+    </principled_bsdf>
+  </nodegraph>
+  <nodedef name="shadernodebsdfprincipled" type="surfaceshader" node="principled_bsdf" target="cycles">
+    <input name="base_color.021" type="color4" value="0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0" />
+    <input name="subsurface.020" type="float" value="0.0" />
+    <input name="subsurface_radius.019" type="vector3" value="1.0, 1.0, 1.0" />
+    <input name="subsurface_color.018" type="color4" value="0.699999988079071, 0.10000000149011612, 0.10000000149011612, 1.0" />
+    <input name="metallic.017" type="float" value="0.0" />
+    <input name="specular.016" type="float" value="0.5" />
+    <input name="specular_tint.015" type="float" value="0.0" />
+    <input name="roughness.014" type="float" value="0.5" />
+    <input name="anisotropic.013" type="float" value="0.0" />
+    <input name="anisotropic_rotation.012" type="float" value="0.0" />
+    <input name="sheen.011" type="float" value="0.0" />
+    <input name="sheen_tint.010" type="float" value="0.5" />
+    <input name="clearcoat.009" type="float" value="0.0" />
+    <input name="clearcoat_roughness.008" type="float" value="0.029999999329447746" />
+    <input name="ior.007" type="float" value="1.4500000476837158" />
+    <input name="transmission.006" type="float" value="0.0" />
+    <input name="transmission_roughness.005" type="float" value="0.0" />
+    <input name="normal.004" type="vector3" value="0.0, 0.0, 0.0" />
+    <input name="clearcoat_normal.003" type="vector3" value="0.0, 0.0, 0.0" />
+    <input name="tangent.002" type="vector3" value="0.0, 0.0, 0.0" />
+    <parameter name="distribution" type="string" value="MULTI_GGX" />
+  </nodedef>
+</materialx>
