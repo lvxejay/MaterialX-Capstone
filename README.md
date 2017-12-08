@@ -17,7 +17,7 @@ The MaterialX - Blender repository consists of the following packages:
     
     
 ### Documentation
-http://materialx-blender-docs.readthedocs.io/en/latest/index.html    
+http://materialx-blender.readthedocs.io/en/latest/
 
 ##### Developers:
 Please reference the Developer's Guide in the Documentation for information on how to contribute to and extend this implementation.
@@ -28,7 +28,6 @@ Please reference the Developer's Guide in the Documentation for information on h
 3) Create a pull request to integrate your modifications into the repository
 4) Wait for your pull request to be accepted.
 
----
 
 ## MaterialX
 

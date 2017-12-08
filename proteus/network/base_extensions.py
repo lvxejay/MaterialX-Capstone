@@ -7,14 +7,28 @@
     
 
 :synopsis:
-    
+    Provides the base MaterialX Custom Node implementation for MaterialXBlender
 
 :description:
+    This module contains the base class for all other Custom MaterialX Python Objects
     
+    The MtlxCustomNode() base class has been designed with a Property API
+    This allows for easy access to public variables and methods.
+    
+    Public variabales collect information about the current node, it's sockets
+    connections, and parameters. 
+    
+    Public methods operate on the public variables, and allow users to create, instance,
+    define, and modify nodes within MTLX documents.
+    
+    The MaterialX (MTLX) library provides methods, classes and functions for creating
+    custom MTLX objects for use in serializing and deserializing a MTLX Doc. 
 
 :applications:
     
+    
 :see_also:
+   
    
 :license:
     see license.txt and EULA.txt 
@@ -32,18 +46,12 @@ except ImportError:
     mx = None
     print("MaterialX extend_cycles_nodes.py module could not load MaterialX library")
 
-# Standard Imports
-import sys
-import inspect
-import os
-import platform
 
 # Standard Blender Python API imports
 import bpy
 from bpy.props import *
 import mathutils
-
-from ...utils.io import IO, Autovivification
+from ...utils.io import IO
 from .materialx_network import MaterialXNetwork
 
 # ---------------------------------------------------------------------------------------#
@@ -53,15 +61,37 @@ from .materialx_network import MaterialXNetwork
 # ---------------------------------------------------------------------------------------#
 # ---------------------------------------------------------------------------- CLASSES --#
 
-'''Base Classes: All Custom MTLX Nodes Inherit from here'''
-
+'''Base Classes: All Custom MTLX Python Object Inherit from here'''
 
 class MtlxCustomNode(object):
     """
     Base MTLX Node Class
     """
-
     def __init__(self, node):
+        """
+        Create and setup this representative node object with an API for accessing node 
+        properties and serializing or deserializing a physical Blender Node into/from MTLX
+
+        :param node: The node from Blender
+        :parameter: params: Every node must contain a list object defining params
+                            self.params = ['param1', 'param2'].
+                            These parameters stored in the self.params variable must
+                            match the name of the same variable for the respective node
+                            in Blender. Any property for a blender node can theoretically 
+                            be serialized into MTLX.
+        :type params: list()      
+        :type node: bpy.types.Node
+        """
+        '''Superclass CyclesMtlxCustomNode'''
+        # super().__init__(node)
+        '''Must include a mtlx_node_name for every node'''
+        # self.mtlx_node = 'mtlx_node_name'
+        '''Must include a list of parameters for every node'''
+        # self.params = ['param1', 'param2']
+        '''Set the target for the subclass'''
+        # self._mtlx_target = 'cycles'
+
+        '''Public & Private Member Variables'''
         # The MaterialXNetwork Document, always public
         self.doc = None
         self.instantiated = False
@@ -96,8 +126,6 @@ class MtlxCustomNode(object):
         Setup function for this node. Called after the node has been initialized in the
         MaterialXNetwork() and after it has been passed the proper initial arguments to
         successfully complete setup.
-        Returns:
-            None
         """
         # Set MTLX Inputs, Outputs, & Params in the pattern (name, type, value)
         self.mtlx_inputs = self.get_inputs()
@@ -114,11 +142,6 @@ class MtlxCustomNode(object):
     def create_node_def(self, **kwargs):
         """
         Instantiates the python node into the MaterialX Document
-        Args:
-            **kwargs:
-                *unused for now
-        Returns:
-            None
         """
         # Check to see if this NodeDef has already been defined
         if self.defined is True:
@@ -148,13 +171,12 @@ class MtlxCustomNode(object):
 
     def pre_instantiate(self, node_graph):
         """Handle any remaining node setup before instantiation in a MTLX NodeGraph()"""
-        IO.info("Instantiating Node: %s" % self.mtlx_name)
         # Set the MTLX Node Graph from a MTLX Material's passed in NodeGraph()
         self.mtlx_node_graph = node_graph
         if self.instantiated is True:
             # Remove the Node if it has already been instantiated once to prevent duplis
-            IO.debug("Removing Node, Already Instantiated")
             self.mtlx_node_graph.removeNode(self.mtlx_name)
+
         # Create and Add a Graph Node
         self.mtlx_graph_node = self.add_graph_node(
             node=self.mtlx_node, name=self.mtlx_name, type=self.mtlx_type)
@@ -175,15 +197,12 @@ class MtlxCustomNode(object):
 
     def add_graph_node(self, **kwargs):
         """
-
-        Args:
-            **kwargs:
+        Add a MaterialX Node to the NodeGraph of the MTLX Document
+        :param kwargs:
             node: The name of the Node Def/Category
             name: The name of the node in the node_graph
             typeString: The type this node outputs
-
-        Returns:
-            mtlx_graph_node
+        :return: mtlx_graph_node
         """
         mtlx_graph_node = self.mtlx_node_graph.addNode(
             kwargs.get('node'),
@@ -217,7 +236,18 @@ class MtlxCustomNode(object):
             yield
 
     def get_node_param(self, node, param):
-        """Gets a node parameter and returns a tuple of its name, type and value"""
+        """
+        Gets a node parameter and returns a tuple of its name, type and value
+        
+        :param node: current node
+        :type node: bpy.types.Node
+        
+        :param param: node parameter name
+        :type param: str
+        
+        :return: (param_name, param_type, param_value)
+        :rtype: list
+        """
         if hasattr(node, param):
             # Return (name, type, value)
             param_value = (getattr(node, param))  # get param value
@@ -243,9 +273,19 @@ class MtlxCustomNode(object):
 
     @staticmethod
     def get_socket_value(node, socket):
-        """Returns a tuple of a node socket's name, type, and value"""
-        # Return a properly cased name
-        socket_name = MaterialXNetwork.to_mtlx_name(socket.name)
+        """
+        Returns a tuple of a node socket's name, type, and value
+        
+        :param node: current node
+        :type node: bpy.types.Node
+        
+        :param socket: socket object
+        :type socket: bpy.types.NodeSocket
+        
+        :return: (socket_name, mtlx_type, value, mtlx_name)
+        :rtype: list
+        """
+        socket_name = MaterialXNetwork.to_mtlx_name(socket.name) #Get a properly case name
         mtlx_type = socket.mtlx_type
         mtlx_name = socket.mtlx_name
         if socket.mtlx_type == 'shader':
@@ -265,7 +305,18 @@ class MtlxCustomNode(object):
 
     @staticmethod
     def get_socket_value_from_keys(node, socket_key, output):
-        """Returns a tuple of a node socket's name, type, and value"""
+        """
+        Returns a tuple of a node socket's name, type, and value using a dict key
+        
+        :param node: current node
+        :param socket_key: name of the socket
+        
+        :param output: True if Output Socket, False if Input Socket
+        :type output: Bool
+        
+        :return: (socket_name, mtlx_type, value, mtlx_name)
+        :rtype: list
+        """
         # Return a properly cased name
         socket_name = MaterialXNetwork.to_mtlx_name(socket_key)
         mtlx_name = ''
@@ -295,17 +346,37 @@ class MtlxCustomNode(object):
             return (socket_name, mtlx_type, value, mtlx_name)
 
     def get_inputs(self):
+        """
+        Get all inputs for this node
+        
+        :return: [(socket_name, mtlx_type, value, mtlx_name)]
+        :rtype: list
+        """
         return [self.get_socket_value(self.node, i)
                 for i in self.node.inputs]
 
     def get_outputs(self):
+        """
+        Get all outputs for this node
+        
+        :return: [(socket_name, mtlx_type, value, mtlx_name)]
+        :rtype: list
+        """
         return [self.get_socket_value(
             self.node, o) for o in self.node.outputs]
 
     def get_params(self):
+        """
+        Get all parameters for this node
+        
+        :return: [(param_name, param_type, param_value)]
+        :rtype: list
+        """
         return [p for p in self.iter_params() if p is not None]
 
     def set_mtlx_type(self):
+        """Evaluate the mtlx_type of the node and set this object's output type"""
+
         # Literal Eval to read the internal node.mtlx_type property from Blender
         from ast import literal_eval
         if self.node.mtlx_type != 'image':
@@ -319,6 +390,16 @@ class MtlxCustomNode(object):
             self.mtlx_type = self.node.mtlx_type
 
     def create_mtlx_inputs(self, mtlx_node, inputs):
+        """
+        Create MaterialX Inputs() for each passed in input object
+        
+        :param mtlx_node: current node
+        
+        :param inputs: list of input sockets
+        :type inputs: list
+        
+        :return: 
+        """
         if len(inputs) >= 1:
             in_type = inputs[0][1]
             for input in inputs:
@@ -339,6 +420,16 @@ class MtlxCustomNode(object):
             pass
 
     def create_mtlx_outputs(self, mtlx_node, outputs):
+        """
+        Create MaterialX Outputs() for each passed in output object
+
+        :param mtlx_node: current node
+
+        :param outputs: list of output sockets
+        :type outputs: list
+
+        :return: 
+        """
         # Multioutput Node
         if len(outputs) > 1:
             out_type = 'multioutput'
@@ -352,6 +443,17 @@ class MtlxCustomNode(object):
                 mtlx_node.addOutput(name=output[3], type=output[1])
 
     def create_mtlx_parameters(self, mtlx_node, parameters):
+        """
+        Create MaterialX Paramters() for each passed in parameter object
+
+        :param mtlx_node: current node
+
+        :param parameters: list of output sockets
+        :type parameters: list
+
+        :return: 
+        """
+
         # Setup node parameters
         if parameters is not None:
             if len(parameters) >= 1:
@@ -360,6 +462,8 @@ class MtlxCustomNode(object):
                     mtlx_node.setParameterValue(parameter[0], parameter[2], parameter[1])
 
     def set_graph_node_inputs(self, inputs):
+        """Set the inputs of a MaterialX Node instance"""
+
         if len(inputs) >= 1:
             in_type = inputs[0][1]
             for input in inputs:
@@ -371,6 +475,8 @@ class MtlxCustomNode(object):
                     print("NON UNIQUE NAME ERROR")
 
     def set_graph_node_parameters(self, parameters):
+        """Set the parameters of a MaterialX Node instance"""
+
         if (parameters is not None) and (len(parameters) >= 1):
             for parameter in parameters:
                 self.mtlx_graph_node.addParameter(name=parameter[0], type=parameter[1])
@@ -521,7 +627,9 @@ class MtlxCustomNode(object):
 
     @property
     def mtlx_target(self):
+        """The target render engine for this MaterialX Node as defined in the spec"""
         return self._mtlx_target
+
     @mtlx_target.setter
     def mtlx_target(self, target_name):
         self._mtlx_target = str(target_name)

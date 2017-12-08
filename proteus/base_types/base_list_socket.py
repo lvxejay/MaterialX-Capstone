@@ -7,7 +7,7 @@
     
 
 :synopsis:
-    
+    Currently unused, but module was included to be later expanded and implemented
 
 :description:
     
@@ -17,7 +17,7 @@
 :see_also:
    
 :license:
-    see license.txt and EULA.txt 
+     
 
 """
 

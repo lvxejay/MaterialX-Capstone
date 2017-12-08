@@ -7,7 +7,7 @@
     
 
 :synopsis:
-    
+    Currently unused, but module was included to be later expanded and implemented
 
 :description:
     

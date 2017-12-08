@@ -5,17 +5,19 @@
 :author:
     Jared Webber
     
-
 :synopsis:
-    Extend's Cycles Material Nodes through Blender's Python API.
+    Extends Cycles Material Nodes through Blender's Python API.
 
 :description:
     This module extends Cycles Material Nodes through Blender's Python API.
-    The MaterialX (MTLX) library provides methods, classes and functions for creating
-Custom Nodes* and other MTLX objects for use in serializing and deserializing a MTLX Doc. 
-    The Cycles Nodes have been extended with a defined property API to allow users to poll
-    Cycles Material Node Tree's for the content, including node links, node parameters,
-    and node socket default values. 
+    
+    All nodes inherit from MtlxCustomNode()
+
+    Public variabales collect information about the current node, it's sockets
+    connections, and parameters. 
+    
+    Public methods operate on the public variables, and allow users to create, instance,
+    define, and modify nodes within MTLX documents.
 
 :applications:
     Blender 3D
@@ -37,18 +39,12 @@ except ImportError:
     mx = None
     print("MaterialX extend_cycles_nodes.py module could not load MaterialX library")
 
-# Standard Imports
-import sys
-import inspect
-import os
-import platform
+
 
 # Standard Blender Python API imports
 import bpy
 from bpy.props import *
-import mathutils
 
-from ...utils.io import IO, Autovivification
 from .materialx_network import MaterialXNetwork
 from .base_extensions import MtlxCustomNode
 # ---------------------------------------------------------------------------------------#
@@ -65,55 +61,86 @@ class CyclesMtlxCustomNode(MtlxCustomNode):
     Base Cycles MTLX Node Class
     """
     def __init__(self, node):
+        # Superclass CyclesMtlxCustomNode
         super().__init__(node)
+
+        # Set the target for the subclass
         self._mtlx_target = 'cycles'
 
-    '''-----------------------------------METHODS--------------------------------------'''
 
+        '''Must include a mtlx_node_name for every node'''
+        # self.mtlx_node = 'mtlx_node_name'
 
-    '''--------------------------Node Property API-------------------------------------'''
-
-    # Blender Overrides -----------------------------------------------------------------
-
-    # MTLX Overrides --------------------------------------------------------------------
+        '''Must include a list of parameters for every node'''
+        # self.params = ['param1', 'param2']
 
 
 
 class CyclesMtlxCustomNode_Shader(CyclesMtlxCustomNode):
     """Cycles Custom Shader Node Implementation"""
     def __init__(self, node):
+
+        #Superclass CyclesMtlxCustomNode
         super().__init__(node)
 
+        '''Must include a mtlx_node_name for every node'''
+        # self.mtlx_node = 'mtlx_node_name'
+
+        '''Must include a list of parameters for every node'''
+        # self.params = ['param1', 'param2']
+
+        '''Set the target for the subclass'''
+        # self._mtlx_target = 'cycles'
+
+
+
+    # MTLX Overrides --------------------------------------------------------------------
+
     def create_node_def(self, **kwargs):
-        """See CyclesMtlxCustomNode.create_node_def()"""
+        """Create a custom node def for this node, overriding the inherited method and
+        instead defining a context specific node_def"""
+
+        # Check to see if we already defined this node in the node graph
         if self.defined is True:
             return
+        # Query the graph just incase defining this node def was missed
+        if self.doc.getNodeDef(self.mtlx_node_def_name) is not None:
+            self.defined = True
+            return
+
+        # Query API for parameters
         outputs = self.mtlx_outputs
         inputs = self.mtlx_inputs
         parameters = self.mtlx_params
         idname = self.idname
         node_type = self.mtlx_type
-        if self.doc.getNodeDef(self.mtlx_node_def_name) is not None:
-            self.defined = True
-            return
+
+        # Create a Custom Node Def for A Custom Shader Node
         shader = self.doc.addNodeDef(name=idname, node=self.mtlx_node,
                                      type='surfaceshader')
-        shader.setTarget('cycles')  # Set CYCLES Node target
+        # Set CYCLES Node target
+        shader.setTarget('cycles')
         # Create, Inputs, Outputs, and Parameters
         self.create_mtlx_inputs(shader, inputs)
         # self.create_mtlx_outputs(shader, outputs) #Shader Nodes only have 1 output
         self.create_mtlx_parameters(shader, parameters)
-
         # Set flag to true to avoid duplicate NodeDef creation
         self.defined = True
 
     def instantiate(self, node_graph):
-        """See CyclesMtlxCustomNode.instantiate()"""
+        """Add this node to the MTLX Node Graph"""
+
+        # Run our pre_instantion setup and definition function
         self.pre_instantiate(node_graph)
+        # Grab the Output Sockets of the MaterialX Node Graph
         surf_out = self.mtlx_node_graph.getOutput('ng_surface_out')
         vol_out = self.mtlx_node_graph.getOutput('ng_volume_out')
         disp_out = self.mtlx_node_graph.getOutput('ng_disp_out')
-        #Connect to NG Output
+
+        # Blender Material Output Nodes, MUST have a shader node connceted to them.
+        # Any node with a BSDF or Shading type output socket should be queryed for any
+        ## connections to the material output node.
+        # Connect this node to the node graph output if it's linked in Blender
         for link in self.node_links:
             if link[0] == self.mtlx_name and link[2] == 'material_output':
                 if link[3] == 'Surface':

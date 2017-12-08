@@ -1,25 +1,3 @@
-# Copyright 2016 Jared Webber (onelvxe@gmail.com)
-#
-# ##### BEGIN GPL LICENSE BLOCK ######
-# This file is part of TheoryDNA.
-#
-# TheoryDNA is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# TheoryDNA is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with TheoryDNA.  If not, see <http://www.gnu.org/licenses/>.
-# ##### END GPL LICENSE BLOCK #####
-
-#from collections import OrderedDict
-
-
 import random
 
 def getRandomString(length):
@@ -28,7 +6,14 @@ def getRandomString(length):
                    for _ in range(length))
 
 def catch_registration_error(func):
+    """
+    Catch registration error for @classmethod registered Blender property groups
+    :param func: registration/unregister function
+    :return: decorated_function
+    :rtype: function
+    """
     def decorated_function(cls):
+        """Run the decorated function and catch any raised errors"""
         try:
             func(cls)
         except (RuntimeError, AttributeError, ValueError, TypeError) as e:
@@ -132,8 +117,8 @@ class IO(object):
         print ("\n  DICTIONARY CONTENTS:")
         print_dict(input_dict)
 
-# Autovivification
 class Autovivification(dict):
+    """Python implementation of Perl's Autovivification data structure"""
     def __getitem__(self, item):
         try:
             return dict.__getitem__(self, item)

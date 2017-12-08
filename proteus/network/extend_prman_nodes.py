@@ -7,10 +7,18 @@
     
 
 :synopsis:
-    
+    Extends Renderman Material Nodes through Blender's Python API.
 
 :description:
+    This module extends Cycles Material Nodes through Blender's Python API.
     
+    All nodes inherit from MtlxCustomNode()
+
+    Public variabales collect information about the current node, it's sockets
+    connections, and parameters. 
+    
+    Public methods operate on the public variables, and allow users to create, instance,
+    define, and modify nodes within MTLX documents.
 
 :applications:
     
@@ -31,19 +39,10 @@ except ImportError:
     mx = None
     print("MaterialX extend_cycles_nodes.py module could not load MaterialX library")
 
-# Standard Imports
-import sys
-import inspect
-import os
-import platform
 
 # Standard Blender Python API imports
 import bpy
 from bpy.props import *
-import mathutils
-
-from ...utils.io import IO, Autovivification
-from .materialx_network import MaterialXNetwork
 from .base_extensions import MtlxCustomNode
 
 # ---------------------------------------------------------------------------------------#
@@ -67,6 +66,7 @@ class PrmanMtlxCustomNode(MtlxCustomNode):
 
     @property
     def params(self):
+        #TODO: Update this so it captures all params
         return self.get_param_keys()
 
     def get_param_keys(self):
@@ -86,6 +86,7 @@ class PrmanMtlxCustomNode(MtlxCustomNode):
 class RMCN_PxrOSLPatternNode(PrmanMtlxCustomNode):
     def __init__(self, node):
         super().__init__(node)
+
 
 class RMCN_PxrSeExprPatternNode(PrmanMtlxCustomNode):
     def __init__(self, node):

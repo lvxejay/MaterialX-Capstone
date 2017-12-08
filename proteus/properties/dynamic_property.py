@@ -5,16 +5,22 @@
 :author:
     Jared Webber
     
-
 :synopsis:
-    
+    Module for 'dynamically' duck typing and creating Blender Properties on the fly
 
 :description:
+    This is an advanced module used for creating Blender Properties.
+    The properties are created "dynamically" and during runtime. 
+    @dynamic for creating dynamic properties
+    @node_paramater for converting node_params you wish to expose to the UI
     
-
 :applications:
     
+    
 :see_also:
+   https://blender.stackexchange.com/questions/86612/creating-dynamic-blender-properties
+   ./node_parameters.py  -- create_property_group()
+   ./base_node.py -- create_parameter() 
    
 :license:
     see license.txt and EULA.txt 
@@ -61,54 +67,13 @@ def dynamic(func):
     return dynamic_property
 
 
-def parameter(func):
-    def parameter_convert(*args, **kwargs):
-        if 'constantValueInt' in func(kwargs.get('type')):
-            new_arg = str(func(*args).replace('{}'.format(" "), ",")).split(',')
-            if len(new_arg) == 3:
-                prop = IntVectorProperty(default=new_arg)
-                return prop
-            elif len(new_arg) == 1:
-                prop = IntProperty(default=int(new_arg[0]))
-                return prop
-            else:
-                pass
-        elif 'constantValueFloat' in func(kwargs.get('type')):
-            new_arg = str(func(*args).replace('{}'.format(" "), ",")).split(',')
-            if len(new_arg) == 3:
-                prop = FloatVectorProperty(
-                    default=[float(new_arg) for new_arg in new_arg])
-                return prop
-            elif len(new_arg) == 1:
-                prop = FloatProperty(default=float(new_arg[0]))
-                return prop
-            else:
-                pass
-        elif 'constantValueBool' in func(kwargs.get('type')):
-            if (func(*args)) == '0':
-                new_arg = False
-                prop = BoolProperty(default=new_arg)
-            else:
-                new_arg = True
-                prop = BoolProperty(default=new_arg)
-            return prop
-        elif 'constantValueString' in func(kwargs.get('type')):
-            new_arg = func(*args)
-            prop = StringProperty(default=new_arg)
-            return prop
-        elif 'color' in func(kwargs.get('type')):
-            new_arg = str(func(*args).replace('{}'.format(" "), ",")).split(',')
-            size = len(new_arg)
-            prop = FloatVectorProperty(default=[float(new_arg) for new_arg in new_arg],
-                                       subtype='COLOR_GAMMA',
-                                       size=size)
-            return prop
-        elif func(kwargs.get('type')) is None:
-            pass
-
-    return parameter_convert
-
 def node_parameter(func):
+    """
+    Decorator to convert a node parameter into a property that can be exposed to the UI
+    and Blender's Python API during runtime. 
+    :param func: 
+    :return: 
+    """
     def node_param_convert(*args, **kwargs):
         new_arg = func(*args)
         if 'INT' in func(kwargs.get('type')):

@@ -7,7 +7,8 @@
 
 
 :synopsis:
-    Base socket class definition, methods and functions 
+    Base socket class definition, methods and functions
+    Currently unused, but module was included to be later expanded and implemented
 
 :description:
     This module contains the MaterialXSocket class definition. 
@@ -26,7 +27,7 @@
     ./base_node.py
     
 :license:
-    see license.txt and EULA.txt
+    see LICENSE.md
 
 """
 
@@ -57,16 +58,16 @@ def get_socket_index(socket, node = None):
         return list(node.outputs).index(socket)
     return list(node.inputs).index(socket)
 
-def is_matx_node_socket(socket):
+def is_mtlx_node_socket(socket):
     """Returns declared variable as True or False, and sets to False by default"""
-    return getattr(socket, "_is_matx_node_socket", False)
+    return getattr(socket, "_is_mtlx_node_socket", False)
 # ---------------------------------------------------------------------------------------#
 # ---------------------------------------------------------------------------- CLASSES --#
 class MaterialXSocket(object):
     """Base MaterialXSocket Class. All other sockets Subclass this."""
 
     # Class Variables that all subclasses inherit
-    _is_matx_node_socket = True
+    _is_mtlx_node_socket = True
     text = StringProperty(default="Socket Name")
     display_property = BoolProperty(default=False)
 
@@ -320,9 +321,9 @@ def register():
     bpy.types.NodeSocket.to_socket_id = to_socket_id
     bpy.types.NodeSocket.get_node_tree = get_node_tree
     bpy.types.NodeSocket.get_socket_index = get_socket_index
-    bpy.types.NodeSocket.is_matx_node_socket = BoolProperty(
+    bpy.types.NodeSocket.is_mtlx_node_socket = BoolProperty(
         default = False,
-        get = is_matx_node_socket)
+        get = is_mtlx_node_socket)
     bpy.types.NodeSocket.mtlx_type = EnumProperty(items=get_socket_types,
                                               get=get_mtlx_type)
     bpy.types.NodeSocket.socket_id = StringProperty()
@@ -331,7 +332,7 @@ def register():
 def unregister():
     """Blender's unregister. Removes extended funcs and props from bpy.types classes."""
     del bpy.types.NodeSocket.to_socket_id
-    del bpy.types.NodeSocket.is_matx_node_socket
+    del bpy.types.NodeSocket.is_mtlx_node_socket
     del bpy.types.NodeSocket.get_socket_index
     del bpy.types.NodeSocket.get_node_tree
     del bpy.types.NodeSocket.socket_id

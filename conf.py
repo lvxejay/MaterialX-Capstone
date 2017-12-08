@@ -6,8 +6,11 @@
     Jared Webber
     
 :synopsis:
+    Configuration file for this addon
     
 :description:
+    This file defines specific configuration variables and functions for this package.
+    The module can be used to house "globals" that need to be shared between modules
     
 :applications:
     
@@ -21,60 +24,11 @@
 # ---------------------------------------------------------------------------------------#
 # ---------------------------------------------------------------------------- IMPORTS --#
 import os
-
 import bpy
-
-from .utils.io import Autovivification, IO
-
+from .utils.io import IO
 
 # ---------------------------------------------------------------------------------------#
 # -------------------------------------------------------------------------- FUNCTIONS --#
-def get_texture_nodes():
-    """
-    Define & Create Texture Node List of Node Setting Dictionaries to be used as global
-    :return: node_list
-    :type: [Autoviv, Autoviv]
-    """
-    node_list = []
-    startYpos = 600
-    startXpos = -800
-    mapSuf = Autovivification()
-    mapSuf["basecolor"] = ["basecolor", "base_color", "color", "albedo", "col"]
-    mapSuf["metallic"] = ["metallic", "metalness", "metal", "mtl"]
-    mapSuf["roughness"] = ["roughness", "rough", "rgh"]
-    mapSuf["normal"] = ["normal", "norm", "nrm"]
-    mapSuf['diffuse'] = ["diffuse", "diff", "dif"]
-    mapSuf['specular'] = ["specular", "specularity", "spec"]
-    mapSuf['glossiness'] = ["glossiness", "glossy", "gloss", "reflection", "ref"]
-    mapSuf["displacement"] = ["displacement", "disp", "dsp", "height", "bump"]
-    mapSuf["ambient_occlusion"] = ["ambient_occlusion", "ao", "ambient", "occlusion"]
-    for map_type in mapSuf.keys():
-        node_settings_dict = Autovivification()
-        ySpacing = 80
-        xSpacing = 180
-        node_settings_dict['node_type'] = 'ShaderNodeTexImage'
-        node_settings_dict['location'] = (startXpos, startYpos)
-        node_settings_dict['map_type'] = str(map_type)
-        node_settings_dict['suffix_list'] = mapSuf[map_type]
-        node_settings_dict['color_space'] = 'COLOR'
-        if map_type not in ['basecolor', 'diffuse', 'specular']:
-            node_settings_dict['color_space'] = 'NONE'
-        node_list.append(node_settings_dict)
-        startYpos -= ySpacing
-        startXpos += xSpacing
-    return node_list
-
-def authenticator(key):
-    import requests
-    url = "https://api.gumroad.com/v2/licenses/verify"
-    r = requests.post(url, dict(
-        product_permalink='onelvxe-material-pipeline',
-        license_key=key,
-        increment_uses_count="false"
-        ))
-
-
-    return r
 
 # ---------------------------------------------------------------------------------------#
 # ---------------------------------------------------------------------------- CLASSES --#

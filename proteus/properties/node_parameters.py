@@ -7,7 +7,9 @@
     
 
 :synopsis:
-    
+    This module allows user's to expose parameters from Node Tree's to be overridden or
+    used outside of a Node's context
+    Currently unused, but module was included to be later expanded and implemented
 
 :description:
     

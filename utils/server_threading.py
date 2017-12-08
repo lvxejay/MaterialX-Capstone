@@ -2,17 +2,15 @@
 # IMPORTS
 # -----------------------------------------------------------------------------
 import threading
-
 from .io import IO
 from .. import conf
-
 
 # -----------------------------------------------------------------------------
 # Launch thread
 # -----------------------------------------------------------------------------
 
-#TODO; Create Threading Decorator to autowrap/thread any function
 def thread(func):
+    """Thread decorator to handle creating non-blocking threaded functions for Blender"""
     def generate_thread(*args, **kwargs):
         if conf.threading_halt is True:
             return
@@ -35,6 +33,7 @@ def thread(func):
 
 
 def launch_background_thread(func, arguments=None):
+    """Create a background thread"""
     if conf.threading_halt == True:
         return
     if conf.vv: print("Starting background")
@@ -65,9 +64,14 @@ def launch_background_thread(func, arguments=None):
 
     return True
 
-# wrap all async calls to handle thread tracking
 def thread_starter_func(func,ID,args):
-
+    """
+    Wraps all async calls to handle thread tracking
+    :param func: 
+    :param ID: 
+    :param args: 
+    :return: 
+    """
     # run the function requested, must be safe
     # print("Wrapper for thread:")
     try:
@@ -83,11 +87,12 @@ def thread_starter_func(func,ID,args):
     #conf.server_threads[ID-1]
 
 
-# refresh the list of threads in case they are stale
-def update_threads():
 
+def update_threads():
+    """Refresh & Update the list of threads in case they are stale"""
     tmp = []
     for t in conf.server_threads:
         if t.isAlive() == True: tmp.append(t)
 
     conf.server_threads = tmp
+

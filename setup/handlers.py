@@ -27,32 +27,12 @@ import os
 from os.path import join
 import bpy
 from .. import conf
-from .. utils.io import catch_registration_error, IO, Autovivification
-from .preferences import getPreferences
-import subprocess
+from .. utils.io import catch_registration_error, IO
 import shutil
 import platform
 
-resource_path = bpy.utils.resource_path('LOCAL',
-                                        major=bpy.app.version[0],
-                                        minor=bpy.app.version[1])
-user_path = bpy.utils.resource_path('USER',
-                                    major=bpy.app.version[0],
-                                    minor=bpy.app.version[1])
-bpy_dir = os.path.join(resource_path, 'python')
-config_dir = os.path.join(user_path, 'scripts/config')
 # ---------------------------------------------------------------------------------------#
 # -------------------------------------------------------------------------- FUNCTIONS --#
-
-
-def run_command_popen(cmd):
-    sp = subprocess.Popen(cmd, stderr=subprocess.PIPE)
-    out, err = sp.communicate()
-    if err:
-        print("__________________________")
-        print("Subprocess standard error:")
-        print(err.decode('ascii'))
-        # sp.wait()
 
 
 # ---------------------------------------------------------------------------------------#
@@ -64,38 +44,53 @@ class InstallMaterialX(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def execute(self, context):
-        #Resource and User Paths for installing libraries into the user's blender
-        local_path = bpy.utils.resource_path('LOCAL',
-                                             major=bpy.app.version[0],
-                                             minor=bpy.app.version[1])
-        site_packages = os.path.join(bpy_dir, 'lib', 'python3.5', 'site-packages')
+        # Get Resource User Paths for installing lib into blender's python
+        resource_path = bpy.utils.resource_path('LOCAL', major=bpy.app.version[0],
+                                                minor=bpy.app.version[1])
+        user_path = bpy.utils.resource_path('USER', major=bpy.app.version[0],
+                                            minor=bpy.app.version[1])
+        local_path = resource_path
+        bpy_dir = os.path.join(resource_path, 'python')
+        config_dir = os.path.join(user_path, 'scripts/config')
+
         # Climb up path
         uppath = lambda _path, n: os.sep.join(_path.split(os.sep)[:-n])
-        addon_path = uppath(__file__, 2)
+        addon_path = os.path.dirname(__file__)
         # Library Directory
         dist_dir = os.path.join(addon_path, "lib", 'dist')
-        if platform.system() == 'windows':
-            matx_lib = os.path.join(dist_dir, 'windows', 'MaterialX.zip')
+
+        # Windows
+        if platform.system() == 'Windows':
+            IO.info("OS Type: Windows. Installing MaterialX for Windows 10")
+            mtlx_lib = os.path.join(dist_dir, 'win', 'MaterialX.zip')
             import ctypes
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
             # Check for Admin Privileges
-            if is_admin is False:
-                self.report({'ERROR'}, "Cannot Install MaterialX. "
-                                       "Run Blender as an Administrator")
+            if is_admin != 1:
+                IO.error("Cannot Install MaterialX. Run Blender as an Administrator")
             # Unpack the library to the blender installation from config
-            shutil.unpack_archive(matx_lib, site_packages)
-        else:
-            # Unpack the library to the blender installation from config
-            matx_lib = os.path.join(dist_dir, 'linux', 'MaterialX.tar.xz')
-            shutil.unpack_archive(matx_lib, site_packages)
+            site_packages = os.path.join(bpy_dir, 'lib', 'site-packages')
+            shutil.unpack_archive(mtlx_lib, site_packages)
+            IO.info("MaterialX unpacked and installed here: %s" % site_packages)
 
-        IO.info("MaterialX unpacked and installed here: %s" % site_packages)
+        # OSX
+        elif platform.system() == 'darwin':
+            IO.info("OS Type: OSX. Material Pipeline currently unsupported.")
+            pass
+            # TODO: Unpack the library to the blender installation from config
 
-        # After installtion, set install flags to disable the operator via poll
+        # Linux
+        elif platform.system() == 'linux':
+            IO.info("OS Type: Linux. Installing MaterialX for Linux")
+            mtlx_lib = os.path.join(dist_dir, 'linux', 'MaterialX.tar.xz')
+            site_packages = os.path.join(bpy_dir, 'lib', 'python3.5', 'site-packages')
+            shutil.unpack_archive(mtlx_lib, site_packages)
+            IO.info("MaterialX unpacked and installed here: %s" % site_packages)
+
+        # TODO: After installtion, set install flags to disable the operator via poll
         # conf.materialx_lib = True
-        scn = context.scene
-        libs = scn.material_pipeline_libs
-        libs.materialx_lib = True
+        # scn = context.scene
+        # libs.materialx_lib = True
         self.report({'INFO'}, "MaterialX Installed")
 
         return {'FINISHED'}
@@ -108,6 +103,7 @@ class InstallRequirements(bpy.types.Operator):
 
     def execute(self, context):
         """Installs requirements.txt and Pysbs"""
+        from .. import run_command_popen
         if conf.py_reqs is True:
             self.report({'INFO'}, "Addon Package Already Configured")
             return{'CANCELLED'}
@@ -121,7 +117,12 @@ class InstallRequirements(bpy.types.Operator):
             'install',
             "-r", req_file
         ]
+        run_command_popen(command)
+
+        # TODO: After installtion, set install flags to disable the operator via poll
+        self.report({'INFO'}, "MaterialX Requirements Installed")
         return {'FINISHED'}
+
 
 class MaterialPipelineLibraries(bpy.types.PropertyGroup):
     @classmethod

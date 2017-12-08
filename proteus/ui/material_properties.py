@@ -7,7 +7,7 @@
     
 
 :synopsis:
-    
+    Blender Python API declared properties and settings
 
 :description:
     
@@ -23,11 +23,10 @@
 
 # ---------------------------------------------------------------------------------------#
 # ---------------------------------------------------------------------------- IMPORTS --#
-import os
+
 import bpy
 from bpy.props import *
-from ...utils.io import Autovivification, IO, catch_registration_error
-from ... import conf
+from ...utils.io import catch_registration_error
 # ---------------------------------------------------------------------------------------#
 # -------------------------------------------------------------------------- FUNCTIONS --#
 
@@ -60,33 +59,6 @@ class MaterialXProperties(bpy.types.PropertyGroup):
     def unregister(cls):
         del bpy.types.Material.mtlx_props
 
-class MTLXOperator(bpy.types.Operator):
-    bl_idname = 'mtlx_operator.write'
-    bl_label = 'Write MaterialX'
-
-    def execute(self, context):
-        mat_idx = context.active_object.active_material_index
-        material = context.active_object.material_slots[mat_idx].material
-        network = material.mtlx_network
-        network.material = material
-        network.init_network()
-        network.update_network()
-
-        return {'FINISHED'}
-
-class MTLXReadOperator(bpy.types.Operator):
-    bl_idname = 'mtlx_operator.read'
-    bl_label = 'Read MaterialX'
-
-    def execute(self, context):
-        mat_idx = context.active_object.active_material_index
-        material = context.active_object.material_slots[mat_idx].material
-        network = material.mtlx_network
-        # network.read_material = None
-        network.material = material
-        network.read_network()
-
-        return {'FINISHED'}
 
 class MaterialXPanel(bpy.types.Panel):
     bl_label = "Material X"

@@ -7,12 +7,17 @@ import importlib
 def setup_addon_modules(path, package_name, reload):
     """
     Imports and reloads all utils in this addon.
-
-    path -- __path__ from __init__.py
-    package_name -- __name__ from __init__.py
-
     Individual utils can define a __reload_order_index__ property which
-    will be used to reload the dna_utils in a specific order. The default is 0.
+    will be used to reload the modules in a specific order. The default is 0.
+    
+    :param path: __path__ from __init__.py
+    :param package_name: __name__ from __init__.py
+    :param reload: reload flag
+    :type path: str
+    :type package_name: str
+    :type reload: bool
+    :return: modules
+    :rtype: list
     """
     def get_submodule_names(path = path[0], root = ""):
         module_names = []
